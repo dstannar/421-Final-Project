@@ -1,2 +1,5 @@
 # 421-Final-Project
-Hailey and Drew's awesome repo for AERO421 final project at Cal Poly
+Hailey, Kate, and Drew's repository for AERO421 Spacecraft Attitude Dynamics and Control Course
+
+Place code in \src
+
