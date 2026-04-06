@@ -58,11 +58,9 @@ q_b_lvlh_0 = [0; 0; 0; 1];
 % compute initial rotation matrices
 C_lvlh_eci_0 = [x_lvlh'; y_lvlh'; z_lvlh'];
 
-C_b_lvlh_0 = [1 0 0
-    0 1 0
-    0 0 1];
+C_b_lvlh_0 = 0
 
-C_b_eci_0 = C_lvlh_eci_0 * C_b_lvlh_0;
+C_b_eci_0 = 
 
 E_b_eci_0 = C2euler(C_b_eci_0);
 
