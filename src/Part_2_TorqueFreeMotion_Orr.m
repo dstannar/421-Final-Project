@@ -6,7 +6,7 @@ clear all
 
 % givens in normal ops
 
-w_b_eci = [0.001
+w_b_ECI_0 = [0.001
     -0.001
     0.002];
 
@@ -25,16 +25,16 @@ h = 53335.2;
 ecc = 0;
 OMEGA = 0 * pi/180;
 inc = deg2rad(98.43);
-omega = 0;
+argofp = 0;
 ta = 0;
 
-a = (h^2 / mu) * (1 / 1 - e^2);
+a = (h^2 / mu) * (1 / 1 - ecc^2);
 period = 2 * pi * sqrt(a^3 / mu);
 
 T = [0; 0; 0];
 
 % get position and velocity
-[r_eci0, v_eci0] = COES2RV(h, inc, OMEGA, ecc, omega, ta, mu);
+[r_eci0, v_eci0] = COES2RV(h, inc, OMEGA, ecc, argofp, ta, mu);
 
 % now need to get vectors into lvlh frame
 
@@ -64,11 +64,18 @@ C_b_lvlh_0 = [1 0 0
 
 C_b_eci_0 = C_lvlh_eci_0 * C_b_lvlh_0;
 
-E_b_eci_0 = C2euler(C_b_eci_0);
+E_b_ECI_0 = C2euler(C_b_eci_0);
+
+q_b_ECI_0 = C2quart(C_b_eci_0);
+
+tspan = period;
+
+out = sim('ORR_Part2');
 
 
 
 
+% ------------------------------------------------------------------------------------
 
 % functions 
 
@@ -76,51 +83,28 @@ function [r, v] = COES2RV(h, inc, RAAN, ecc, omega, TA, mu)
 
 % make sure everything is in radians!!
 
-rp = (h^2/mu) * (1/(1 + ecc * cos(TA))) * (cos(TA) * [1;0;0] + sin(TA) * [0;1;0]);
-vp = (mu/h) * (-sin(TA) * [1;0;0] + (ecc + cos(TA)) * [0;1;0]);
+    rp = (h^2/mu) * (1/(1 + ecc * cos(TA))) * (cos(TA) * [1;0;0] + sin(TA) * [0;1;0]);
+    vp = (mu/h) * (-sin(TA) * [1;0;0] + (ecc + cos(TA)) * [0;1;0]);
 
-R3_RAAN = [cos(RAAN) sin(RAAN) 0
-     -sin(RAAN) cos(RAAN) 0
-     0 0 1];
+    R3_RAAN = [cos(RAAN) sin(RAAN) 0
+         -sin(RAAN) cos(RAAN) 0
+         0 0 1];
 
-R1_inc = [1 0 0
+    R1_inc = [1 0 0
      0 cos(inc) sin(inc)
      0 -sin(inc) cos(inc)];
 
-R3_omega = [cos(omega) sin(omega) 0
+    R3_omega = [cos(omega) sin(omega) 0
      -sin(omega) cos(omega) 0
      0 0 1];
 
-Q_pX = (R3_omega * R1_inc * R3_RAAN)';
+    Q_pX = (R3_omega * R1_inc * R3_RAAN)';
 
-r = Q_pX * rp;
-v = Q_pX * vp;
-
-end
-
-
-function d_quaternion = quaternion_func(time, q, w21, I) 
-e = q(1:3);
-eta = q(4);
-
-E_dot = 0.5 * (eta * I * w21 + cross(e, w21));
-eta_dot = -0.5 * e.' * w21;
-d_quaternion = [E_dot; eta_dot];
+    r = Q_pX * rp;
+    v = Q_pX * vp;
 
 end
 
-function d_euler = euler_func(time, e, w21) 
-theta_x = e(1);
-theta_y = e(2);
-%theta_z = e(3); not necessary in calculations
-
-C21 = [cos(theta_y) sin(theta_x) * sin(theta_y) cos(theta_x) * sin(theta_y)
-    0 cos(theta_x) * cos(theta_y) -sin(theta_x) * cos(theta_y)
-    0 sin(theta_x) cos(theta_x)];
-
-d_euler = (1 / cos(theta_y)) * C21 * w21;
-
-end
 
 
 function euler = C2euler(C21)
@@ -130,5 +114,22 @@ function euler = C2euler(C21)
     psi = atan(C21(1,2) / C21(1,1));
 
     euler = [phi; theta; psi];
+
+end
+
+
+function quarternion = C2quart(C21)
+   
+    phi = acos((trace(C21) - 1) / 2);
+    eta0 = (trace(C21) + 1)^(0.5) / 2;
+
+    a10 = (C21(2,3) - C21(3,2)) / (4 * eta0);
+    a20 = (C21(3,1) - C21(1,3)) / (4 * eta0);
+    a30 = (C21(1,2) - C21(2,1)) / (4 * eta0);
+
+    o = sin(phi / 2); % random variable
+
+    epsilon0 = [a10 * o; a20 * o; a30 * o]; 
+    quarternion = [epsilon0; eta0];
 
 end
