@@ -22,7 +22,7 @@ function [rvec, vvec] = coesToState(hmag, ecc, TA, raan, inc, argp, mu)
     r0 = rmag * [cos(TA); sin(TA); 0.0];
     v0 = (mu/hmag) * [-sin(TA); ecc + cos(TA); 0.0];
 
-    % Rotation matrices exactly following the Python convention
+    % Rotation matrices
     R3_W = [ cos(raan),  sin(raan), 0;
             -sin(raan),  cos(raan), 0;
                      0,          0, 1];

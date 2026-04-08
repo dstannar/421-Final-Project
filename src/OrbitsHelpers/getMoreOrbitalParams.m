@@ -27,7 +27,7 @@ function params = getMoreOrbitalParams(hmag, ecc, TA, raan, inc, argp, mu)
     % Semimajor axis
     sma = 0.5 * (r_per + r_apo);
 
-    % Period (elliptic case, same as Python)
+    % Period
     period = 2*pi / sqrt(mu) * sma^(3/2);
 
     % State vectors from COEs
@@ -55,8 +55,8 @@ function params = getMoreOrbitalParams(hmag, ecc, TA, raan, inc, argp, mu)
     n = sqrt(mu / sma^3);
 
     % Orbit geometry
-    b = sma * sqrt(1 - ecc^2);      % semiminor axis
-    c = sma * ecc;                  % focal distance
+    b = sma * sqrt(1 - ecc^2); % semiminor axis
+    c = sma * ecc; % focal distance
 
     % Perifocal vectors
     evec_pqw = [ecc; 0; 0];

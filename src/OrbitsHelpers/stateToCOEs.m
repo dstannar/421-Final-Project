@@ -73,7 +73,7 @@ function coes = stateToCOEs(rvec, vvec, mu)
         TA = 2*pi - ta_raw;
     end
 
-    % More orbital parameters (same math as Python)
+    % More orbital parameters
     r_per = hmag^2 / mu * (1 / (1 + ecc*cos(0)));
     r_apo = hmag^2 / mu * (1 / (1 + ecc*cos(pi)));
     sma = 0.5 * (r_per + r_apo);
