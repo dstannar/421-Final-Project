@@ -66,7 +66,7 @@ C_b_eci_0 = C_lvlh_eci_0 * C_b_lvlh_0;
 
 E_b_ECI_0 = C2euler(C_b_eci_0);
 
-q_b_ECI_0 = C2quart(C_b_eci_0);
+q_b_ECI_0 = C2quat(C_b_eci_0);
 
 tspan = period;
 
@@ -118,7 +118,7 @@ function euler = C2euler(C21)
 end
 
 
-function quarternion = C2quart(C21)
+function quaternion = C2quat(C21)
    
     phi = acos((trace(C21) - 1) / 2);
     eta0 = (trace(C21) + 1)^(0.5) / 2;
@@ -130,6 +130,6 @@ function quarternion = C2quart(C21)
     o = sin(phi / 2); % random variable
 
     epsilon0 = [a10 * o; a20 * o; a30 * o]; 
-    quarternion = [epsilon0; eta0];
+    quaternion = [epsilon0; eta0];
 
 end
