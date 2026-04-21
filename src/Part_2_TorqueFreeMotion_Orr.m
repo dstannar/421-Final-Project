@@ -3,6 +3,7 @@
 
 clc
 clear all
+close all
 
 % givens in normal ops
 
@@ -72,10 +73,36 @@ tspan = period;
 
 out = sim('ORR_Part2');
 
+t = out.tout;
+w = squeeze(out.w.signals.values);
+E = squeeze(out.E.signals.values);
+q = squeeze(out.q.signals.values);
 
+figure
+subplot(3,1,1)
+plot(t, w)
+ylabel('\omega (rad/s)')
+xlabel('Time (secs)')
+legend('\omega_x','\omega_y','\omega_z')
+grid on
+title('Angular Velocities')
 
+subplot(3,1,2)
+plot(t, E)
+ylabel('Euler Angles (radians)')
+xlabel('Time (secs)')
+legend('\phi','\theta','\psi')
+grid on
+title('Euler Angles')
 
-% ------------------------------------------------------------------------------------
+subplot(3,1,3)
+plot(t, q)
+xlabel('Time (secs)')
+ylabel('q')
+legend('q_1','q_2','q_3','q_4')
+title('Quaternions')
+% ------------------------
+% ------------------------------------------------------------
 
 % functions 
 
