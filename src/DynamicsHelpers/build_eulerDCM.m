@@ -55,33 +55,33 @@ function DCM = build_eulerDCM(first_rot, second_rot, third_rot, a1, a2, a3, degs
 
     switch first_rot
         case 1
-            matrix1 = Cx(a1, symbolic);
+            matrix1 = Cx(a1);
         case 2
-            matrix1 = Cy(a1, symbolic);
+            matrix1 = Cy(a1);
         case 3
-            matrix1 = Cz(a1, symbolic);
+            matrix1 = Cz(a1);
         otherwise
             error('first_rot must be 1, 2, or 3');
     end
 
     switch second_rot
         case 1
-            matrix2 = Cx(a2, symbolic);
+            matrix2 = Cx(a2);
         case 2
-            matrix2 = Cy(a2, symbolic);
+            matrix2 = Cy(a2);
         case 3
-            matrix2 = Cz(a2, symbolic);
+            matrix2 = Cz(a2);
         otherwise
             error('second_rot must be 1, 2, or 3');
     end
 
     switch third_rot
         case 1
-            matrix3 = Cx(a3, symbolic);
+            matrix3 = Cx(a3);
         case 2
-            matrix3 = Cy(a3, symbolic);
+            matrix3 = Cy(a3);
         case 3
-            matrix3 = Cz(a3, symbolic);
+            matrix3 = Cz(a3);
         otherwise
             error('third_rot must be 1, 2, or 3');
     end

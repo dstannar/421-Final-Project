@@ -57,4 +57,4 @@ q0_b_eci = DCM_to_quat(C_b_ECI_0);
 tspan = [0 orbital_period];
 
 % USE SIMULINK
-out = sim('Part_2_Simulink');
+out = sim('SS_Part2.slx');
