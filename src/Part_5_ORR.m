@@ -81,19 +81,10 @@ q_b_ECI_0 = C2quat(C_b_eci_0);
 
 % now add control law
 
-% assume given Mp
-Mp = 0.1;
-ts = 100;
-
-zeta = sqrt(log(Mp)^2/(pi^2 + log(Mp)^2));
-
-wn = log(0.02*sqrt(1-zeta^2))/-zeta/ts;
-
-beta = atan(sqrt(1-zeta^2)/zeta);
-tr = (pi-beta)/wn/sqrt(1-zeta^2);
-
-Kp = 2*J*eye(3)*wn^2;
-Kd = J*eye(3)*2*zeta*wn;
+Kp = zeros(3);
+Kd = [0.2 0 0 
+    0 0.2 0
+    0 0 0.2];
 
 % what is our commanded euler??
 E_c = [0;0;0];
@@ -108,9 +99,14 @@ t = out.tout;
 w = squeeze(out.w.signals.values);
 E = squeeze(out.E.signals.values);
 q = squeeze(out.q.signals.values);
-T = squeeze(out.T.signals.values);
 
-figure
+% this one was being weird
+M_c_sig = out.logsout.get('M_c');
+M_c = squeeze(M_c_sig.Values.Data);
+
+
+
+figure()
 subplot(3,1,1)
 plot(t, w)
 ylabel('\omega (rad/s)')
@@ -127,15 +123,15 @@ legend('\phi','\theta','\psi')
 grid on
 title('Euler Angles')
 
-subplot(3,1,3)
+subplot(3, 1, 3)
 plot(t, q)
 xlabel('Time (secs)')
 ylabel('q')
 legend('q_1','q_2','q_3','q_4')
 title('Quaternions')
-sqtitle('Body to ECI Dynamics and Kinematics for Detumble Phase')
 
-plot(t, T)
+figure()
+plot(t, M_c)
 xlabel('time (seconds')
 ylabel('Torque (Nm)')
 legend('T_x', 'T_y', 'T_z')
