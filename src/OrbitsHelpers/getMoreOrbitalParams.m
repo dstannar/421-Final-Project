@@ -111,4 +111,5 @@ function params = getMoreOrbitalParams(hmag, ecc, TA, raan, inc, argp, mu)
 
     params.v_per  = v_per;
     params.v_apo  = v_apo;
+    params.mu = mu;
 end

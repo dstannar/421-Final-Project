@@ -1,55 +1,58 @@
-function quat = DCM_to_quat(C)
+function q = DCM_to_quat(C)
 % DCM_to_quat
-% DCM to quaternion
-% Returns q = [e1; e2; e3; eta], normalized.
-%
-% Supports numeric or symbolic input.
+% Converts DCM to quaternion q = [e1; e2; e3; eta]
+% Matches quat_to_DCM convention:
+% C = (2*eta^2 - 1)I + 2*eps*eps' - 2*eta*skew(eps)
 
-    tol = 1e-8;
+C = reshape(double(C),3,3);
 
-    if isa(C, 'sym')
-        tr = trace(C);
-        eta = sqrt(tr + 1)/2;
+tr = trace(C);
 
-        if abs(double(vpa(eta))) > tol
-            e1 = (C(3,2) - C(2,3)) / (4*eta);
-            e2 = (C(1,3) - C(3,1)) / (4*eta);
-            e3 = (C(2,1) - C(1,2)) / (4*eta);
-        else
-            e1 = sqrt((C(1,1) + 1)/2);
-            e2 = sqrt((C(2,2) + 1)/2);
-            e3 = sqrt((C(3,3) + 1)/2);
+if tr > 0
+    S = 2*sqrt(max(tr + 1, 0));
+    
+    eta = 0.25*S;
+    e1  = (C(2,3) - C(3,2))/S;
+    e2  = (C(3,1) - C(1,3))/S;
+    e3  = (C(1,2) - C(2,1))/S;
 
-            % arbitrarily choose e1 positive
-            e1 = abs(e1);
-            e2 = sign(C(1,2)) * abs(e2);
-            e3 = sign(C(1,3)) * abs(e3);
-        end
+else
+    if C(1,1) > C(2,2) && C(1,1) > C(3,3)
+        S = 2*sqrt(max(1 + C(1,1) - C(2,2) - C(3,3), 0));
+        
+        e1  = 0.25*S;
+        e2  = (C(1,2) + C(2,1))/S;
+        e3  = (C(1,3) + C(3,1))/S;
+        eta = (C(2,3) - C(3,2))/S;
 
-        quat = [e1; e2; e3; eta];
-        quat = quat / norm(quat);
+    elseif C(2,2) > C(3,3)
+        S = 2*sqrt(max(1 + C(2,2) - C(1,1) - C(3,3), 0));
+        
+        e1  = (C(1,2) + C(2,1))/S;
+        e2  = 0.25*S;
+        e3  = (C(2,3) + C(3,2))/S;
+        eta = (C(3,1) - C(1,3))/S;
 
     else
-        C = reshape(double(C), 3, 3);
-        tr = trace(C);
-        eta = 0.5 * sqrt(tr + 1.0);
-
-        if abs(eta) > tol
-            e1 = (C(2,3) - C(3,2)) / (4.0*eta);
-            e2 = (C(3,1) - C(1,3)) / (4.0*eta);
-            e3 = (C(2,1) - C(1,2)) / (4.0*eta);
-        else
-            e1 = sqrt((C(1,1) + 1.0)/2.0);
-            e2 = sqrt((C(2,2) + 1.0)/2.0);
-            e3 = sqrt((C(3,3) + 1.0)/2.0);
-
-            % arbitrarily choose e1 positive
-            e1 = abs(e1);
-            e2 = sign(C(1,2)) * abs(e2);
-            e3 = sign(C(1,3)) * abs(e3);
-        end
-
-        quat = [e1; e2; e3; eta];
-        quat = quat / norm(quat);
+        S = 2*sqrt(max(1 + C(3,3) - C(1,1) - C(2,2), 0));
+        
+        e1  = (C(1,3) + C(3,1))/S;
+        e2  = (C(2,3) + C(3,2))/S;
+        e3  = 0.25*S;
+        eta = (C(1,2) - C(2,1))/S;
     end
+end
+
+q = [e1; e2; e3; eta];
+
+% Normalize
+n = norm(q);
+if n > 0
+    q = q/n;
+else
+    q = [0;0;0;1];
+end
+
+
+
 end
